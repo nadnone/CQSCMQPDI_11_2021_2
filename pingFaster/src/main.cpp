@@ -9,8 +9,11 @@
 #ifdef _WIN32
 #include <ws2tcpip.h>
 #include <winsock2.h>
+#include <iphlpapi.h>
+
 #else
 #include <arpa/inet.h>
+#include <ifaddrs.h
 #endif
 
 using namespace std;
@@ -25,10 +28,9 @@ void pingthread(in_addr ip_in, FILE* file)
 	char ip[16] = "";
 	inet_ntop(AF_INET, &ip_in.S_un.S_addr, ip, sizeof(char) * 16);
 
-	// initialisation du timeout
 
+	// creation de la socket
 	int s = socket(PF_INET, SOCK_RAW, 1);
-
 
 	if (s == INVALID_SOCKET)
 	{
@@ -88,7 +90,7 @@ void pingthread(in_addr ip_in, FILE* file)
 	}
 	else
 	{
-		printf("ping recv: %s\n", res);
+		//printf("ping recv: %s\n", res);
 
 
 		// ecriture des resultats
@@ -136,9 +138,10 @@ int pingDispatcher(string ip_start, string ip_end)
 		//printf("%s\n", ip_to_ping);
 
 
-		// TODO trouver son addresse ip locale
+		// TODO trouver l'addresse ip locale de la machine
 
-		//char myip[16];
+	
+
 
 		//inet_ntop(AF_INET, &h, myip, sizeof(myip));
 
@@ -156,8 +159,8 @@ int pingDispatcher(string ip_start, string ip_end)
 	for (int i = 0; i < threads.size(); i++)
 	{
 		threads[i].detach();
-		Sleep(5);
-		//threads[i].~thread();
+		Sleep(5); // timeout
+		threads[i].~thread();
 		
 	}
 
@@ -202,7 +205,7 @@ int main(int argc, char* argv[])
 
 	// lancement du scann
 
-	pingDispatcher((string)"192.168.0.1", (string)"192.168.0.200");
+	pingDispatcher((string)"192.168.0.1", (string)"192.168.0.247");
 
 
 	// calcul du temps passé
