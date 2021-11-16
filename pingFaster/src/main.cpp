@@ -1,4 +1,7 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <iostream>
+
 #include <thread>
 #include <string.h>
 #include <string>
@@ -9,14 +12,23 @@
 #ifdef _WIN32
 #include <ws2tcpip.h>
 #include <winsock2.h>
-#include <iphlpapi.h>
 
 #else
 #include <arpa/inet.h>
-#include <ifaddrs.h
+#include <netinet/tcp.h>
+#include <netinet/ip.h>
 #endif
 
 using namespace std;
+
+struct pseudo_header
+{
+	uint32_t source_addr;
+	uint32_t dest_addr;
+	uint8_t protocol;
+	uint16_t tcp_lenght;
+};
+
 
 
 void pingthread(in_addr ip_in, FILE* file)
@@ -81,7 +93,6 @@ void pingthread(in_addr ip_in, FILE* file)
 	// receive PONG;
 	int response = recvfrom(s, res, sizeof(res), 0, ResAddr, (int*)res_addr_size);
 
-
 	if(response == INVALID_SOCKET)
 	{
 		//printf("response error: %i\n", response);
@@ -91,6 +102,7 @@ void pingthread(in_addr ip_in, FILE* file)
 	else
 	{
 		//printf("ping recv: %s\n", res);
+
 
 
 		// ecriture des resultats
@@ -110,15 +122,17 @@ void pingthread(in_addr ip_in, FILE* file)
 	return;
 }
 
-int pingDispatcher(string ip_start, string ip_end)
+
+int pingDispatcher(string ip_start, string ip_end, string local_ip)
 {
-	in_addr nb_s, nb_e;
+	in_addr nb_s, nb_e, nb_bypass;
 
 	vector<thread> threads;
 
 	// conversion 
 	inet_pton(AF_INET, ip_start.c_str(), &nb_s);
 	inet_pton(AF_INET, ip_end.c_str(), &nb_e);
+	inet_pton(AF_INET, local_ip.c_str(), &nb_bypass);
 
 	// ouverture du fichier de data
 	FILE* file;
@@ -131,37 +145,28 @@ int pingDispatcher(string ip_start, string ip_end)
 	}
 
 
-	int plages_ip = ntohl(nb_e.S_un.S_addr) - ntohl(nb_s.S_un.S_addr);
+	int plages_ip = ntohl(nb_e.S_un.S_addr);//- ntohl(nb_s.S_un.S_addr);
+	int ip_nb_bypass = ntohl(nb_bypass.S_un.S_addr);
 
-	for (int i = 0; i <= plages_ip; i++) // on arrête si nb_ip_start <= que nb_ip_end 
+	for (int i = ntohl(nb_s.S_un.S_addr); i <= plages_ip; i++) // on arrête si nb_ip_start <= que nb_ip_end 
 	{
-		//printf("%s\n", ip_to_ping);
-
-
-		// TODO trouver l'addresse ip locale de la machine
-
 	
-
-
-		//inet_ntop(AF_INET, &h, myip, sizeof(myip));
-
-		//printf("myip: %s\n", myip);
-
-		threads.push_back(thread(pingthread, nb_s, file));
+		if (i != ip_nb_bypass)
+		{
+			threads.push_back(thread(pingthread, nb_s, file));
+		}
 
 		nb_s.S_un.S_addr = htonl(ntohl(nb_s.S_un.S_addr) + 1); // on incrémente l'addresse ip de 1
 	
 	}
 	
 
-
+	Sleep(70);
 	// tout ce qui dépasse 50 ms est annulé 
 	for (int i = 0; i < threads.size(); i++)
 	{
 		threads[i].detach();
-		Sleep(5); // timeout
 		threads[i].~thread();
-		
 	}
 
 
@@ -184,8 +189,6 @@ int main(int argc, char* argv[])
 {
 	// initialisation
 
-	chrono::milliseconds t0 = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch());
-
 	printf("Initialisation...\n");
 
 
@@ -203,16 +206,51 @@ int main(int argc, char* argv[])
 #endif // WIN32
 
 
+	// garde fou
+
+	if (argc < 4) 
+	{
+		printf("./pingFaster.exe <ip_start> <ip_end> <your_ip>");
+	}
+	else
+	{
+		while (true)
+		{
+			char reply = NULL;
+			printf("Are you sur ? [y/n]\n");
+			cin >> reply;
+
+			if (reply == 'y')
+			{
+				break;
+			}
+			else if (reply == 'n')
+			{
+				return 0;
+			}
+
+		}
+
+
+
+	}
+
+
 	// lancement du scann
 
-	pingDispatcher((string)"192.168.0.1", (string)"192.168.0.247");
+	chrono::milliseconds t0 = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch());
 
+
+	pingDispatcher(argv[1], argv[2], argv[3]);
+
+	printf("And of course: %s\n", argv[3]);
 
 	// calcul du temps passé
 
 	chrono::milliseconds t1 = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch());
 
 	t1 -= t0;
+
 
 	printf("Finished, time spent: %f s\n", (float)t1.count()/1000.0);
 
