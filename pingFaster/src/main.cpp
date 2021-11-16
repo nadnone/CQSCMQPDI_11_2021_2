@@ -150,7 +150,7 @@ int pingDispatcher(string ip_start, string ip_end, string local_ip)
 	}
 	
 
-	Sleep(70);
+	Sleep(200);
 	// tout ce qui dépasse 50 ms est annulé 
 	for (int i = 0; i < threads.size(); i++)
 	{
