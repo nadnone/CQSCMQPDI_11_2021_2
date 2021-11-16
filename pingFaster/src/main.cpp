@@ -158,7 +158,6 @@ int pingDispatcher(string ip_start, string ip_end, string local_ip)
 	for (int i = 0; i < threads.size(); i++)
 	{
 		threads[i].detach();
-		threads[i].~thread();
 	}
 
 
