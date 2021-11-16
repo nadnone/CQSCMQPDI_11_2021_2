@@ -150,7 +150,7 @@ int pingDispatcher(string ip_start, string ip_end, string local_ip)
 	}
 	
 
-	Sleep(200);
+	Sleep(100);
 	// tout ce qui dépasse 50 ms est annulé 
 	for (int i = 0; i < threads.size(); i++)
 	{
@@ -199,6 +199,8 @@ int main(int argc, char* argv[])
 	if (argc < 4) 
 	{
 		printf("./pingFaster.exe <ip_start> <ip_end> <your_ip>\n");
+		Sleep(5000);
+		return 0;
 	}
 	else
 	{
