@@ -9,7 +9,3 @@
 ![img1](./res_demo/info_cpp_program.png)
 
 ![img1](./res_demo/info_py_program.png)
-
-
-## Credits:
-- [This product includes software developed by the University of California, Berkeley and its contributors.](https://github.com/the-tcpdump-group/tcpdump/blob/e3a00d340c8707b178b0cce017e009cfaafdd22d/ip.h)
