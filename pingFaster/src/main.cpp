@@ -7,12 +7,13 @@
 #include <string>
 #include <vector>
 #include <chrono>
-#include <future>
 
 #ifdef _WIN32
 #include <ws2tcpip.h>
 #include <winsock2.h>
 
+
+// Je n'ai aucune idée de si ce program fonctionne osus Linux ou MacOS
 #else
 #include <arpa/inet.h>
 #include <netinet/tcp.h>
@@ -21,13 +22,6 @@
 
 using namespace std;
 
-struct pseudo_header
-{
-	uint32_t source_addr;
-	uint32_t dest_addr;
-	uint8_t protocol;
-	uint16_t tcp_lenght;
-};
 
 
 
@@ -102,8 +96,6 @@ void pingthread(in_addr ip_in, FILE* file)
 	else
 	{
 		//printf("ping recv: %s\n", res);
-
-
 
 		// ecriture des resultats
 		fwrite(ip, sizeof(char), 16, file);
