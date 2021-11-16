@@ -12,8 +12,7 @@
 #include <ws2tcpip.h>
 #include <winsock2.h>
 
-
-// Je n'ai aucune idée de si ce program fonctionne osus Linux ou MacOS
+// Je n'ai aucune idée de si ce program fonctionne sous Linux ou MacOS
 #else
 #include <arpa/inet.h>
 #include <netinet/tcp.h>
@@ -25,7 +24,7 @@ using namespace std;
 
 
 
-void pingthread(in_addr ip_in, FILE* file)
+void pingthread(in_addr ip_in)//, FILE* file)
 {
 
 	// ouverture de connexion 
@@ -98,17 +97,14 @@ void pingthread(in_addr ip_in, FILE* file)
 		//printf("ping recv: %s\n", res);
 
 		// ecriture des resultats
-		fwrite(ip, sizeof(char), 16, file);
-		fwrite("\n", sizeof(char), 1, file);
+		//fwrite(ip, sizeof(char), 16, file);
+		//fwrite("\n", sizeof(char), 1, file);
 
 		printf("Connexion success %s\n", ip);
 
 	}
-	// fermeture de connexion
-	
-	free(ResAddr);
-	free(res_addr_size);
 
+	// fermeture de connexion
 	closesocket(s);
 	
 	return;
@@ -126,7 +122,8 @@ int pingDispatcher(string ip_start, string ip_end, string local_ip)
 	inet_pton(AF_INET, ip_end.c_str(), &nb_e);
 	inet_pton(AF_INET, local_ip.c_str(), &nb_bypass);
 
-	// ouverture du fichier de data
+	// ouverture du fichier de data (useless)
+	/*
 	FILE* file;
 	fopen_s(&file, "ips_list.txt", "w");
 	if (file == NULL)
@@ -135,7 +132,7 @@ int pingDispatcher(string ip_start, string ip_end, string local_ip)
 		return 1;
 
 	}
-
+	*/
 
 	int plages_ip = ntohl(nb_e.S_un.S_addr);//- ntohl(nb_s.S_un.S_addr);
 	int ip_nb_bypass = ntohl(nb_bypass.S_un.S_addr);
@@ -145,7 +142,7 @@ int pingDispatcher(string ip_start, string ip_end, string local_ip)
 	
 		if (i != ip_nb_bypass)
 		{
-			threads.push_back(thread(pingthread, nb_s, file));
+			threads.push_back(thread(pingthread, nb_s));//, file));
 		}
 
 		nb_s.S_un.S_addr = htonl(ntohl(nb_s.S_un.S_addr) + 1); // on incrémente l'addresse ip de 1
@@ -163,7 +160,7 @@ int pingDispatcher(string ip_start, string ip_end, string local_ip)
 
 
 
-	fclose(file);
+	//fclose(file);
 	return 0;
 }
 
@@ -201,7 +198,7 @@ int main(int argc, char* argv[])
 
 	if (argc < 4) 
 	{
-		printf("./pingFaster.exe <ip_start> <ip_end> <your_ip>");
+		printf("./pingFaster.exe <ip_start> <ip_end> <your_ip>\n");
 	}
 	else
 	{
@@ -232,7 +229,12 @@ int main(int argc, char* argv[])
 	chrono::milliseconds t0 = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch());
 
 
-	pingDispatcher(argv[1], argv[2], argv[3]);
+	int rval = pingDispatcher(argv[1], argv[2], argv[3]);
+
+	if (rval)
+	{
+		return 1;
+	}
 
 	printf("And of course: %s\n", argv[3]);
 
