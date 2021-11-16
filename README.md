@@ -1,4 +1,4 @@
-## Teste de refonte du code [du challenge CQSCMQPDI de novembre 2021](https://github.com/nadnone/CQSCMQPDI_11_2021) en ésperant que cela serait plus rapide.
+## Teste de refonte du code [du challenge CQSCMQPDI de novembre 2021](https://github.com/nadnone/CQSCMQPDI_11_2021) en ésperant que cela soit plus rapide.
 
 ![img1](./res_demo/info_cpp_program.png)
 
