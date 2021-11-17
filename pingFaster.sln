@@ -7,12 +7,18 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pingFaster", "pingFaster\pi
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug 192.168.0.1|x64 = Debug 192.168.0.1|x64
+		Debug 192.168.0.1|x86 = Debug 192.168.0.1|x86
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D30BA6D7-175C-4E2C-B371-D48863BD920E}.Debug 192.168.0.1|x64.ActiveCfg = Debug 192.168.0.1|x64
+		{D30BA6D7-175C-4E2C-B371-D48863BD920E}.Debug 192.168.0.1|x64.Build.0 = Debug 192.168.0.1|x64
+		{D30BA6D7-175C-4E2C-B371-D48863BD920E}.Debug 192.168.0.1|x86.ActiveCfg = Debug 192.168.0.1|Win32
+		{D30BA6D7-175C-4E2C-B371-D48863BD920E}.Debug 192.168.0.1|x86.Build.0 = Debug 192.168.0.1|Win32
 		{D30BA6D7-175C-4E2C-B371-D48863BD920E}.Debug|x64.ActiveCfg = Debug|x64
 		{D30BA6D7-175C-4E2C-B371-D48863BD920E}.Debug|x64.Build.0 = Debug|x64
 		{D30BA6D7-175C-4E2C-B371-D48863BD920E}.Debug|x86.ActiveCfg = Debug|Win32
